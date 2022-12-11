@@ -1,55 +1,45 @@
 import React, { useState } from "react";
 import axios from "axios";
 export default function Form() {
-  const [files, setFiles] = useState([]);
-  const [input, setinput] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    username: "",
-    contact: "",
-    employee: "",
-  });
-  const [file, setFile] = useState([]);
+  const [signature1, setsignature1] = useState([]);
+  const [signature2, setsignature2] = useState([]);
+  const [profile, setprofile] = useState([]);
+  const [input, setinput] = useState("");
 
-  const handleFiles = (e) => setFiles(e.target.files ? e.target.files : []);
-  const handleFile = (e) => setFile(e.target.files ? e.target.files : []);
+  const handlesign1 = (e) =>
+    setsignature1(e.target.files ? e.target.files : []);
+  const handlesign2 = (e) =>
+    setsignature2(e.target.files ? e.target.files : []);
+  const handleprofile = (e) => setprofile(e.target.files ? e.target.files : []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(input);
+    const formData = new FormData();
+    formData.append("signature1", signature1[0]);
+    formData.append("signature2", signature2[0]);
+    formData.append("avatar", profile[0]);
+    formData.append("contact", input);
 
-    if (files.length > 0) {
-      const { firstname, lastname, email, username, contact, employee } = input;
-      const formData = new FormData();
-      formData.append("image", files[0]);
-      formData.append("image", file[0]);
-      formData.append("firstname", firstname);
-      formData.append("lastname", lastname);
-      formData.append("contact", contact);
-      formData.append("username", username);
-      formData.append("employee", employee);
-      formData.append("email", email);
+    axios
+      .post(
+        "http://localhost:8080/iaccess/editprofile",
 
-      axios
-        .post(
-          "http://localhost:8080/iaccess/editprofile",
-
-          formData,
-          {
-            headers: {
-              authorization:
-                "berer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjAsIm5hbWUiOiJ2aXNoYWwiLCJsYXN0bmFtZSI6Im11bmRheSIsImVtYWlsIjoidmlzaHUuaW1AZ21haWwuY29tIiwidXNlcm5hbWUiOiJzdXBlcmFkbWluIiwib3JnYW5pemF0aW9uX2lkIjoxNSwiZW1wbG95ZV90eXBlIjoiZCIsImVtcGxveWVfaWQiOiI1NWNqampjZmZmamRkIiwiY291bnRyeSI6ImluZGlhIiwiY29udGFjdF9ubyI6Iis5MTg1NzAwOTA1NTYiLCJ1c2VyX3JvbGUiOiJzdXBlcmFkbWluIiwidG90cCI6IlRSVUUiLCJhMmYiOiJUT1RQIiwiRmlyc3RMb2dpbiI6InRydWUiLCJpYXQiOjE2NzA0MjU4NDl9.ssjY-JTChydOSicDoFocYBk4h0Cj8iuNqOMWcFApmfw",
-            },
-          }
-        )
-        .then((res) => console.log(res.data));
-    }
+        formData,
+        {
+          headers: {
+            authorization:
+              "berer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OTIsImlhdCI6MTY3MDYwNzIwNH0.Uj5fCPzS8O6hBpRu3q7PmrASF22jV8a9U79C0nafxQg",
+          },
+        }
+      )
+      .then((res) => console.log(res.data));
   };
 
   const handleinput = (e) => {
     //code
-    const { value, name } = e.target;
-    setinput({ ...input, [name]: value });
+
+    setinput(e.target.value);
   };
 
   return (
@@ -57,56 +47,18 @@ export default function Form() {
       <form onSubmit={handleSubmit} method="POST" encType="multipart/form-data">
         <input
           type="text"
-          placeholder="firstname"
-          name={"firstname"}
-          onChange={handleinput}
-          value={input.firstname}
-        />
-        <br />
-        <input
-          type="text"
-          placeholder="lastname"
-          name={"lastname"}
-          onChange={handleinput}
-          value={input.lastname}
-        />
-        <br />
-        <input
-          type="text"
-          placeholder="email"
-          name={"email"}
-          onChange={handleinput}
-          value={input.email}
-        />
-        <br />
-        <input
-          type="text"
-          placeholder="username"
-          name={"username"}
-          onChange={handleinput}
-          value={input.username}
-        />
-        <br />
-        <input
-          type="text"
           placeholder="conatct"
           name={"contact"}
           onChange={handleinput}
-          value={input.contact}
-        />
-        <br />
-        <input
-          type="text"
-          placeholder="employee"
-          name={"employee"}
-          onChange={handleinput}
-          value={input.employee}
+          value={input}
         />
         <br />
 
-        <input type="file" name="image" onChange={handleFiles} />
+        <input type="file" name="signature1" onChange={handlesign1} />
         <br />
-        <input type="file" name="image" onChange={handleFile} />
+        <input type="file" name="signature2" onChange={handlesign2} />
+        <br />
+        <input type="file" name="profile" onChange={handleprofile} />
         <button> send </button>
         <br />
         <img
